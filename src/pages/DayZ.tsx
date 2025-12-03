@@ -53,6 +53,62 @@ const DayZ = () => {
     { id: 4, title: "Баги и эксплойты", description: "Использование игровых багов для получения преимущества запрещено" },
   ];
 
+  const donatePackages = [
+    {
+      id: 1,
+      name: "STARTER",
+      price: "299₽",
+      duration: "30 дней",
+      icon: "Package",
+      popular: false,
+      features: [
+        "Приоритет в очереди",
+        "Уникальный значок",
+        "+50% к луту",
+        "Стартовый набор оружия"
+      ]
+    },
+    {
+      id: 2,
+      name: "SURVIVOR",
+      price: "599₽",
+      duration: "30 дней",
+      icon: "Shield",
+      popular: true,
+      features: [
+        "Всё из STARTER",
+        "Персональный транспорт",
+        "Защита базы от рейдов",
+        "+100% к луту",
+        "Доступ к VIP-зонам"
+      ]
+    },
+    {
+      id: 3,
+      name: "LEGEND",
+      price: "1299₽",
+      duration: "30 дней",
+      icon: "Crown",
+      popular: false,
+      features: [
+        "Всё из SURVIVOR",
+        "Вертолёт в личное пользование",
+        "Неограниченный инвентарь",
+        "Бессмертие базы 24ч",
+        "+200% к луту",
+        "Цветное имя в чате"
+      ]
+    }
+  ];
+
+  const serverLocations = [
+    { name: "Москва #1", region: "RU-MSK", players: 58, maxPlayers: 60, coords: { x: 45, y: 30 } },
+    { name: "Санкт-Петербург #1", region: "RU-SPB", players: 42, maxPlayers: 50, coords: { x: 42, y: 25 } },
+    { name: "Казань #1", region: "RU-KZN", players: 35, maxPlayers: 50, coords: { x: 52, y: 32 } },
+    { name: "Екатеринбург #1", region: "RU-EKB", players: 28, maxPlayers: 50, coords: { x: 68, y: 35 } },
+    { name: "Новосибирск #1", region: "RU-NSK", players: 47, maxPlayers: 60, coords: { x: 78, y: 38 } },
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
@@ -120,16 +176,24 @@ const DayZ = () => {
       {/* Main Content */}
       <div className="container mx-auto px-4 pb-20">
         <Tabs defaultValue="servers" className="w-full">
-          <TabsList className="mb-8 w-full max-w-2xl mx-auto">
-            <TabsTrigger value="servers" className="flex-1">
+          <TabsList className="mb-8 w-full max-w-4xl mx-auto grid grid-cols-2 lg:grid-cols-5">
+            <TabsTrigger value="servers">
               <Icon name="Server" size={18} className="mr-2" />
               Серверы
             </TabsTrigger>
-            <TabsTrigger value="maps" className="flex-1">
+            <TabsTrigger value="maps">
               <Icon name="Map" size={18} className="mr-2" />
               Карты
             </TabsTrigger>
-            <TabsTrigger value="rules" className="flex-1">
+            <TabsTrigger value="donate">
+              <Icon name="ShoppingCart" size={18} className="mr-2" />
+              Донат
+            </TabsTrigger>
+            <TabsTrigger value="monitor">
+              <Icon name="Activity" size={18} className="mr-2" />
+              Мониторинг
+            </TabsTrigger>
+            <TabsTrigger value="rules">
               <Icon name="Shield" size={18} className="mr-2" />
               Правила
             </TabsTrigger>
@@ -237,6 +301,190 @@ const DayZ = () => {
                   </Card>
                 ))}
               </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="donate">
+            <div className="space-y-6">
+              <div className="text-center mb-8">
+                <h2 className="text-4xl font-bold mb-3">Магазин донатов</h2>
+                <p className="text-muted-foreground">Поддержи проект и получи эксклюзивные преимущества</p>
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-6">
+                {donatePackages.map((pkg, index) => (
+                  <Card
+                    key={pkg.id}
+                    className={`glass-effect p-8 hover-scale animate-fade-in relative ${
+                      pkg.popular ? 'border-2 border-primary' : ''
+                    }`}
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                  >
+                    {pkg.popular && (
+                      <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                        <Badge className="gradient-primary px-6 py-1">ПОПУЛЯРНЫЙ</Badge>
+                      </div>
+                    )}
+
+                    <div className="text-center mb-6">
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-xl gradient-primary flex items-center justify-center">
+                        <Icon name={pkg.icon} size={32} />
+                      </div>
+                      <h3 className="text-3xl font-bold mb-2">{pkg.name}</h3>
+                      <div className="text-4xl font-bold gradient-primary bg-clip-text text-transparent mb-2">
+                        {pkg.price}
+                      </div>
+                      <p className="text-sm text-muted-foreground">{pkg.duration}</p>
+                    </div>
+
+                    <div className="space-y-3 mb-8">
+                      {pkg.features.map((feature, idx) => (
+                        <div key={idx} className="flex items-start gap-2">
+                          <Icon name="Check" size={18} className="text-accent mt-0.5 flex-shrink-0" />
+                          <span className="text-sm">{feature}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <Button className="w-full gradient-primary">
+                      <Icon name="ShoppingCart" size={18} className="mr-2" />
+                      Купить
+                    </Button>
+                  </Card>
+                ))}
+              </div>
+
+              <Card className="glass-effect p-8 mt-12">
+                <div className="flex flex-col md:flex-row items-center gap-6">
+                  <div className="w-20 h-20 rounded-xl gradient-primary flex items-center justify-center flex-shrink-0">
+                    <Icon name="Gift" size={40} />
+                  </div>
+                  <div className="flex-1 text-center md:text-left">
+                    <h3 className="text-2xl font-bold mb-2">Промокоды</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Есть промокод? Активируй его и получи бонусы!
+                    </p>
+                    <div className="flex gap-2 max-w-md mx-auto md:mx-0">
+                      <input
+                        type="text"
+                        placeholder="Введи промокод"
+                        className="flex-1 px-4 py-2 rounded-lg bg-background/50 border border-border"
+                      />
+                      <Button className="gradient-primary">Активировать</Button>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="monitor">
+            <div className="space-y-6">
+              <div className="text-center mb-8">
+                <h2 className="text-4xl font-bold mb-3">Мониторинг серверов</h2>
+                <p className="text-muted-foreground">Отслеживай статистику в реальном времени</p>
+              </div>
+
+              <div className="grid lg:grid-cols-3 gap-6 mb-8">
+                <Card className="glass-effect p-6">
+                  <div className="flex items-center gap-3 mb-2">
+                    <Icon name="Activity" size={24} className="text-accent" />
+                    <h3 className="text-xl font-bold">Общая нагрузка</h3>
+                  </div>
+                  <p className="text-4xl font-bold mb-1">67%</p>
+                  <p className="text-sm text-muted-foreground">Средняя загрузка серверов</p>
+                </Card>
+
+                <Card className="glass-effect p-6">
+                  <div className="flex items-center gap-3 mb-2">
+                    <Icon name="TrendingUp" size={24} className="text-primary" />
+                    <h3 className="text-xl font-bold">Пик онлайна</h3>
+                  </div>
+                  <p className="text-4xl font-bold mb-1">312</p>
+                  <p className="text-sm text-muted-foreground">Сегодня в 21:00</p>
+                </Card>
+
+                <Card className="glass-effect p-6">
+                  <div className="flex items-center gap-3 mb-2">
+                    <Icon name="Clock" size={24} className="text-secondary" />
+                    <h3 className="text-xl font-bold">Среднее время</h3>
+                  </div>
+                  <p className="text-4xl font-bold mb-1">4.2ч</p>
+                  <p className="text-sm text-muted-foreground">Игровой сессии</p>
+                </Card>
+              </div>
+
+              <Card className="glass-effect p-8">
+                <h3 className="text-2xl font-bold mb-6">Карта серверов</h3>
+                <div className="relative w-full h-[400px] bg-gradient-to-br from-background to-muted/20 rounded-lg overflow-hidden border border-border">
+                  <div className="absolute inset-0 opacity-10"
+                    style={{
+                      backgroundImage: "url('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?q=80&w=2000')",
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center'
+                    }}
+                  />
+                  
+                  {serverLocations.map((location, index) => (
+                    <div
+                      key={index}
+                      className="absolute group cursor-pointer animate-fade-in"
+                      style={{
+                        left: `${location.coords.x}%`,
+                        top: `${location.coords.y}%`,
+                        animationDelay: `${index * 0.15}s`
+                      }}
+                    >
+                      <div className="relative">
+                        <div className="w-4 h-4 rounded-full bg-accent animate-pulse shadow-lg shadow-accent/50" />
+                        <div className="absolute w-8 h-8 rounded-full bg-accent/20 -top-2 -left-2 animate-ping" />
+                      </div>
+                      
+                      <div className="absolute left-8 top-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                        <Card className="glass-effect p-4 w-48 border-accent/50">
+                          <h4 className="font-bold mb-2">{location.name}</h4>
+                          <div className="space-y-1 text-xs text-muted-foreground">
+                            <p className="flex justify-between">
+                              <span>Регион:</span>
+                              <span className="text-foreground">{location.region}</span>
+                            </p>
+                            <p className="flex justify-between">
+                              <span>Игроки:</span>
+                              <span className="text-accent">{location.players}/{location.maxPlayers}</span>
+                            </p>
+                            <div className="mt-2 w-full bg-muted rounded-full h-2">
+                              <div 
+                                className="bg-accent h-2 rounded-full transition-all"
+                                style={{ width: `${(location.players / location.maxPlayers) * 100}%` }}
+                              />
+                            </div>
+                          </div>
+                        </Card>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-6">
+                  {serverLocations.map((location, index) => (
+                    <Card
+                      key={index}
+                      className="glass-effect p-4 hover-scale animate-fade-in"
+                      style={{ animationDelay: `${index * 0.1 + 0.5}s` }}
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-2 h-2 rounded-full bg-accent" />
+                        <h4 className="font-bold text-sm">{location.name}</h4>
+                      </div>
+                      <p className="text-xs text-muted-foreground mb-2">{location.region}</p>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-muted-foreground">Онлайн:</span>
+                        <span className="font-semibold">{location.players}/{location.maxPlayers}</span>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </Card>
             </div>
           </TabsContent>
 
